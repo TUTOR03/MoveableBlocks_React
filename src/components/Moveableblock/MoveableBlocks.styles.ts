@@ -13,9 +13,10 @@ export const Block = styled.div<BlockProps>`
   background-color: white;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
-  -webkit-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
+  border: 1px solid black;
+  /* -webkit-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
   -moz-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2); */
 `
 
 export const ControlHeader = styled.div`
@@ -25,7 +26,7 @@ export const ControlHeader = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
 `
 
 export const ControlButton = styled.button`

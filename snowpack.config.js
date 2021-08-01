@@ -25,6 +25,8 @@ module.exports = {
     '@components': path.join(__dirname, 'src/components'),
     '@styles': path.join(__dirname, 'src/styles'),
     '@icons': path.join(__dirname, 'src/icons'),
+    '@hooks': path.join(__dirname, 'src/hooks'),
+    '@type': path.join(__dirname, 'src/types'),
   },
   exclude: ['**/node_modules/**/*', '**/*.test.*'],
 }

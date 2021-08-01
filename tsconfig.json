@@ -9,13 +9,15 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
-    "lib": ["DOM"],
+    "lib": ["DOM", "ES2020"],
     "allowJs": true,
     "paths": {
       "@utils/*": ["./src/utils/*"],
       "@components/*": ["./src/components/*"],
       "@styles/*": ["./src/styles/*"],
-      "@icons/*": ["./src/icons/*"]
+      "@icons/*": ["./src/icons/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@type/*": ["./src/types/*"]
     }
   },
   "include": ["./src/**/*", "./types"],
