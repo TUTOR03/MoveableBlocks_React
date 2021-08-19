@@ -4,10 +4,9 @@ import React, {
   MouseEvent,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
 } from 'react'
-import { Board } from './InfinityBoard.styles'
+import { Board, BoardCanvas } from './InfinityBoard.styles'
 
 type InfinityBoardProps = {
   size: {
@@ -21,6 +20,7 @@ type InfinityBoardProps = {
 
 const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosition, changeActiveBlock }) => {
   const boardRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const onGrabDown = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -42,18 +42,38 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
     [changeActiveBlock]
   )
 
+  const draw = (ctx: CanvasRenderingContext2D) => {
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, size.width, size.height)
+  }
+
   const mouseMoveBoard = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       const board = boardRef.current
-      if (board) {
+      const canvas = canvasRef.current
+      if (board && canvas) {
+        const context = canvas.getContext('2d')
         const boundingRect = board.getBoundingClientRect()
         const x = e.clientX - boundingRect.left
         const y = e.clientY - boundingRect.top
         changePosition(x, y)
+        if (context) {
+          draw(context)
+        }
       }
     },
     [changePosition]
   )
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const context = canvas.getContext('2d')
+      if (context) {
+        draw(context)
+      }
+    }
+  }, [])
 
   return (
     <Board
@@ -62,9 +82,16 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
       height={size.height}
       width={size.width}
     >
+      <BoardCanvas ref={canvasRef} height={size.height} width={size.width} />
       {
         Object.values(blocks).map((block) =>
-          <MoveableBlock key={block.id} block={block} onGrabDown={onGrabDown} onGrabUp={onGrabUp} />)
+          <MoveableBlock
+            key={block.id}
+            block={block}
+            onGrabDown={onGrabDown}
+            onGrabUp={onGrabUp}
+          />
+        )
       }
 
     </Board>
