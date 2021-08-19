@@ -1,6 +1,5 @@
 import MoveableBlock from '@components/Moveableblock'
-import { useBlocks } from '@hooks/useBlocks'
-import { BlockType } from '@type/infinityBoard'
+import { Block, ChangeActiveBlockT, ChangePositionT } from '@type/infinityBoard'
 import React, {
   MouseEvent,
   useCallback,
@@ -15,18 +14,12 @@ type InfinityBoardProps = {
     width: number
     height: number
   }
-  blocks: BlockType[]
+  blocks: { [key: string]: Block }
+  changePosition: ChangePositionT
+  changeActiveBlock: ChangeActiveBlockT
 }
 
-const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks }) => {
-  const {
-    blockState,
-    changeActiveBlock,
-    changePosition,
-    generateBlock,
-    addBlocks,
-    activeBlockState,
-  } = useBlocks(size)
+const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosition, changeActiveBlock }) => {
   const boardRef = useRef<HTMLDivElement>(null)
 
   const onGrabDown = useCallback(
@@ -43,7 +36,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks }) => {
   )
 
   const onGrabUp = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
+    () => {
       changeActiveBlock('')
     },
     [changeActiveBlock]
@@ -56,24 +49,11 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks }) => {
         const boundingRect = board.getBoundingClientRect()
         const x = e.clientX - boundingRect.left
         const y = e.clientY - boundingRect.top
-        changePosition({ x, y })
+        changePosition(x, y)
       }
     },
     [changePosition]
   )
-
-  useEffect(() => {
-    if (blocks) {
-      addBlocks(
-        Array.from(
-          blocks.map((block, blockId) => {
-            const generated = generateBlock(block)
-            return [generated.id, generated]
-          })
-        )
-      )
-    }
-  }, [])
 
   return (
     <Board
@@ -82,23 +62,11 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks }) => {
       height={size.height}
       width={size.width}
     >
-      {Object.values(blockState).map((block) => {
-        switch (block.type) {
-          case 'block_empty': {
-            return (
-              <MoveableBlock
-                blockId={block.id}
-                isActive={activeBlockState.activeId === block.id}
-                onGrabUp={onGrabUp}
-                onGrabDown={onGrabDown}
-                position={block.position}
-                size={block.size}
-                key={block.id}
-              />
-            )
-          }
-        }
-      })}
+      {
+        Object.values(blocks).map((block) =>
+          <MoveableBlock key={block.id} block={block} onGrabDown={onGrabDown} onGrabUp={onGrabUp} />)
+      }
+
     </Board>
   )
 }

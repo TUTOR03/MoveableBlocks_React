@@ -9,6 +9,7 @@ export const Board = styled.div<BoardProps>`
   position: relative;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
+  box-sizing: content-box;
   background-color: white;
   border: 1px solid black;
   -webkit-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);

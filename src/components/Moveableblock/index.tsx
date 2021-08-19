@@ -1,36 +1,28 @@
-import React, { MouseEvent, useEffect } from 'react'
-import { Block, ControlButton, ControlHeader } from './MoveableBlocks.styles'
+import React, { MouseEvent } from 'react'
+import { BlockContainer, ControlButton, ControlHeader } from './MoveableBlocks.styles'
 import MoveArrow from '@icons/MoveArrow.svg'
+import { Block } from '@type/infinityBoard'
 
 type MoveableBlockProps = {
-  size: {
-    height: number
-    width: number
-  }
-  blockId: string
-  position: {
-    x: number
-    y: number
-  }
-  isActive: boolean
+  block: Block
   onGrabDown: (e: MouseEvent<HTMLButtonElement>) => void
   onGrabUp: (e: MouseEvent<HTMLButtonElement>) => void
 }
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
-  ({ size, blockId, isActive, position, onGrabDown, onGrabUp }) => {
+  ({ block, onGrabDown, onGrabUp }) => {
     return (
-      <Block
-        width={size.width}
-        height={size.height}
+      <BlockContainer
+        width={block.size.width}
+        height={block.size.height}
         style={{
-          transform: `translate(${position.x}px,${position.y}px)`,
-          zIndex: isActive ? 2 : 1,
+          ...block.styles,
+          transform: `translate(${block.position.x}px,${block.position.y}px)`
         }}
       >
         <ControlHeader>
           <ControlButton
-            data-name={blockId}
+            data-name={block.id}
             onMouseUp={onGrabUp}
             onMouseDown={onGrabDown}
             className="grab"
@@ -39,8 +31,7 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             <MoveArrow />
           </ControlButton>
         </ControlHeader>
-        <h5>empty Block</h5>
-      </Block>
+      </BlockContainer>
     )
   }
 )

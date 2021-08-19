@@ -5,7 +5,7 @@ type BlockProps = {
   width: number
 }
 
-export const Block = styled.div<BlockProps>`
+export const BlockContainer = styled.div<BlockProps>`
   position: absolute;
   top: 0;
   left: 0;
@@ -13,16 +13,11 @@ export const Block = styled.div<BlockProps>`
   background-color: white;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
-  border: 1px solid black;
-  /* -webkit-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 0px 10px 1px rgba(34, 60, 80, 0.2); */
 `
 
 export const ControlHeader = styled.div`
   width: 100%;
   border-bottom: 1px solid black;
-  // Возможно я исправлю это )))
   height: 32px;
   display: flex;
   align-items: center;
