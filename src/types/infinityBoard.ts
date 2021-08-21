@@ -9,19 +9,42 @@ export interface BaseBlock {
     height: number
     width: number
   }
-  position: {
-    x: number
-    y: number
-  }
+  position: PositionT
   styles?: React.CSSProperties
 }
 
-export type Block = EmptyBlock
+export type PositionT = {
+  x: number
+  y: number
+}
+
+export type Block = EmptyBlock | InOutBlock
 
 export type BaseBlockAction = Omit<Block, 'id'>
 
 export interface EmptyBlock extends BaseBlock {
-  type: 'block_empty'
+  type: 'empty_block'
+}
+
+export interface InOutBlock extends BaseBlock {
+  type: 'in_out_block'
+  connections: [InputConnection, OutputConnection]
+}
+
+/**
+ * Типы соединений
+ */
+
+export type Connection = InputConnection | OutputConnection
+
+export type InputConnection = {
+  type: 'input'
+  outputBlockId: string
+}
+
+export type OutputConnection = {
+  type: 'output'
+  inputBlockid: string
 }
 
 /**
@@ -31,6 +54,8 @@ export type ChangePositionT = (x: number, y: number) => void
 
 export type ChangeActiveBlockT = (blockId: string, diff?: { xDiff: number; yDiff: number }) => void
 
-export type CalcNextPositionT = (prev: Block[], blockId: string, x: number, y: number) => { x: number, y: number }
+export type CalcNextPositionT = (prev: Block[], blockId: string, x: number, y: number) => PositionT
 
 export type CreateBlockT = (action: BaseBlockAction[]) => void
+
+export type DrawBoardT = (ctx: CanvasRenderingContext2D) => void

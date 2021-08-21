@@ -1,5 +1,5 @@
 import MoveableBlock from '@components/Moveableblock'
-import { Block, ChangeActiveBlockT, ChangePositionT } from '@type/infinityBoard'
+import { Block, ChangeActiveBlockT, ChangePositionT, DrawBoardT } from '@type/infinityBoard'
 import React, {
   MouseEvent,
   useCallback,
@@ -16,9 +16,10 @@ type InfinityBoardProps = {
   blocks: { [key: string]: Block }
   changePosition: ChangePositionT
   changeActiveBlock: ChangeActiveBlockT
+  drawBoard: DrawBoardT
 }
 
-const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosition, changeActiveBlock }) => {
+const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosition, changeActiveBlock, drawBoard }) => {
   const boardRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -42,11 +43,6 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
     [changeActiveBlock]
   )
 
-  const draw = (ctx: CanvasRenderingContext2D) => {
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, size.width, size.height)
-  }
-
   const mouseMoveBoard = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       const board = boardRef.current
@@ -58,11 +54,11 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
         const y = e.clientY - boundingRect.top
         changePosition(x, y)
         if (context) {
-          draw(context)
+          drawBoard(context)
         }
       }
     },
-    [changePosition]
+    [changePosition, drawBoard]
   )
 
   useEffect(() => {
@@ -70,7 +66,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
     if (canvas) {
       const context = canvas.getContext('2d')
       if (context) {
-        draw(context)
+        drawBoard(context)
       }
     }
   }, [])

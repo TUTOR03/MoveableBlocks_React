@@ -1,4 +1,4 @@
-import { BaseBlockAction, Block } from "@type/infinityBoard"
+import { BaseBlockAction, Block, PositionT } from "@type/infinityBoard"
 import { useState, useCallback } from "react"
 import { v4 as uuidv4 } from 'uuid'
 
@@ -13,7 +13,49 @@ type ActiveStateT = {
 }
 
 export const useBoard = (size: { width: number, height: number }) => {
-  const [blockState, setBlockState] = useState<BlockStateT>({})
+  const [blockState, setBlockState] = useState<BlockStateT>({
+    '1block': {
+      id: '1block',
+      type: 'in_out_block',
+      size: {
+        height: 100,
+        width: 100,
+      },
+      position: {
+        x: 10,
+        y: 10,
+      },
+      styles: {
+        border: '1px solid black'
+      },
+      connections: [
+        {
+          type: 'input',
+          outputBlockId: ''
+        },
+        {
+          type: 'output',
+          inputBlockid: '2block'
+
+        }
+      ]
+    },
+    '2block': {
+      id: '2block',
+      type: 'empty_block',
+      size: {
+        height: 100,
+        width: 100,
+      },
+      position: {
+        x: 100,
+        y: 100,
+      },
+      styles: {
+        border: '1px solid black'
+      }
+    },
+  })
 
   const [activeBlockState, setActiveBlockState] = useState<ActiveStateT>({
     activeId: '',
@@ -77,16 +119,86 @@ export const useBoard = (size: { width: number, height: number }) => {
 
       }
     },
-    [Object.keys(blockState).length, activeBlockState]
+    [activeBlockState]
   )
+
+  /**
+   * Отрисовка соединений и сети доски
+   */
+  const drawBoard = (ctx: CanvasRenderingContext2D): void => {
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, size.width, size.height)
+
+    ctx.strokeStyle = '#ff0000'
+    ctx.beginPath()
+    for (let tempBlockId in blockState) {
+      const block = blockState[tempBlockId]
+      if ('connections' in block) {
+        for (let connection of block.connections) {
+          if (connection.type === 'output' && connection.inputBlockid) {
+            const startPosition = {
+              x: block.position.x + Math.floor(block.size.width / 2),
+              y: block.position.y + Math.floor(block.size.height / 2)
+            }
+            const endPosition = {
+              x: blockState[connection.inputBlockid].position.x + Math.floor(blockState[connection.inputBlockid].size.width / 2),
+              y: blockState[connection.inputBlockid].position.y + Math.floor(blockState[connection.inputBlockid].size.height / 2)
+            }
+            const points = calcConnectionPoints(startPosition, endPosition)
+            for (let pointIndex = 0; pointIndex < points.length - 1; pointIndex++) {
+              ctx.moveTo(points[pointIndex].x, points[pointIndex].y)
+              ctx.lineTo(points[pointIndex + 1].x, points[pointIndex + 1].y)
+            }
+          }
+        }
+      }
+    }
+    ctx.stroke()
+  }
+
+  /**
+   * Вычисление точек соединительной линии
+   */
+  const calcConnectionPoints = (startPosition: PositionT, endPosition: PositionT) => {
+    const xMiddle = Math.round((startPosition.x + endPosition.x) / 2)
+    const yMiddle = Math.round((startPosition.y + endPosition.y) / 2)
+    let points = [startPosition]
+    if (Math.abs(startPosition.x - endPosition.x) >= Math.abs(startPosition.y - endPosition.y)) {
+      points = [
+        ...points,
+        {
+          x: xMiddle,
+          y: startPosition.y
+        },
+        {
+          x: xMiddle,
+          y: endPosition.y
+        }
+      ]
+    }
+    else {
+      points = [
+        ...points,
+        {
+          x: startPosition.x,
+          y: yMiddle,
+        },
+        {
+          x: endPosition.x,
+          y: yMiddle
+        }
+      ]
+    }
+    return [
+      ...points,
+      endPosition
+    ]
+  }
 
   /**
    * Просчитывание следующей позиции, основываясь на новом положении курсора и предыдущей позиции
    */
-  const calcNextPosition = (prev: BlockStateT, blockId: string, x: number, y: number): {
-    x: number,
-    y: number
-  } => {
+  const calcNextPosition = (prev: BlockStateT, blockId: string, x: number, y: number): PositionT => {
     let xDone = true
     let yDone = true
     const xRight = x + prev[blockId].size.width - 1
@@ -127,6 +239,7 @@ export const useBoard = (size: { width: number, height: number }) => {
     size,
     changePosition,
     changeActiveBlock,
-    createBlocks
+    createBlocks,
+    drawBoard
   }
 }
