@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 /**
  * Типы блоков
@@ -39,12 +39,12 @@ export type Connection = InputConnection | OutputConnection
 
 export type InputConnection = {
   type: 'input'
-  outputBlockId: string
+  connectedBlockId: string
 }
 
 export type OutputConnection = {
   type: 'output'
-  inputBlockid: string
+  connectedBlockId: string
 }
 
 /**
@@ -52,9 +52,24 @@ export type OutputConnection = {
  */
 export type ChangePositionT = (x: number, y: number) => void
 
-export type ChangeActiveBlockT = (blockId: string, diff?: { xDiff: number; yDiff: number }) => void
+export type ChangeActiveBlockT = (
+  blockId: string,
+  diff?: { xDiff: number; yDiff: number }
+) => void
 
-export type CalcNextPositionT = (prev: Block[], blockId: string, x: number, y: number) => PositionT
+export type ChangeActiveConnectionT = (
+  blockId: string,
+  connectionIndex: number,
+  x: number,
+  y: number
+) => void
+
+export type CalcNextPositionT = (
+  prev: Block[],
+  blockId: string,
+  x: number,
+  y: number
+) => PositionT
 
 export type CreateBlockT = (action: BaseBlockAction[]) => void
 

@@ -5,6 +5,10 @@ type BlockProps = {
   width: number
 }
 
+type ControlConnectorProps = {
+  color: string
+}
+
 export const BlockContainer = styled.div<BlockProps>`
   position: absolute;
   top: 0;
@@ -21,7 +25,7 @@ export const ControlHeader = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 `
 
 export const ControlButton = styled.button`
@@ -39,4 +43,16 @@ export const ControlButton = styled.button`
   &.grab {
     cursor: grab;
   }
+`
+
+export const ControlConnector = styled.div<ControlConnectorProps>`
+  height: 31px;
+  width: 31px;
+  background-color: ${(props) => props.color};
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `

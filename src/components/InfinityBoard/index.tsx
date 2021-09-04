@@ -1,11 +1,12 @@
 import MoveableBlock from '@components/Moveableblock'
-import { Block, ChangeActiveBlockT, ChangePositionT, DrawBoardT } from '@type/infinityBoard'
-import React, {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
+import {
+  Block,
+  ChangeActiveBlockT,
+  ChangeActiveConnectionT,
+  ChangePositionT,
+  DrawBoardT,
+} from '@type/infinityBoard'
+import React, { MouseEvent, useCallback, useEffect, useRef } from 'react'
 import { Board, BoardCanvas } from './InfinityBoard.styles'
 
 type InfinityBoardProps = {
@@ -16,10 +17,18 @@ type InfinityBoardProps = {
   blocks: { [key: string]: Block }
   changePosition: ChangePositionT
   changeActiveBlock: ChangeActiveBlockT
+  changeActiveConnection: ChangeActiveConnectionT
   drawBoard: DrawBoardT
 }
 
-const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosition, changeActiveBlock, drawBoard }) => {
+const InfinityBoard: React.FC<InfinityBoardProps> = ({
+  size,
+  blocks,
+  changePosition,
+  changeActiveBlock,
+  changeActiveConnection,
+  drawBoard,
+}) => {
   const boardRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -36,12 +45,20 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
     [changeActiveBlock]
   )
 
-  const onGrabUp = useCallback(
-    () => {
-      changeActiveBlock('')
-    },
-    [changeActiveBlock]
-  )
+  const onGrabUp = useCallback(() => {
+    changeActiveBlock('')
+  }, [changeActiveBlock])
+
+  const onConnectionClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    const targetDataSet = e.currentTarget.dataset
+    const board = boardRef.current
+    if (board) {
+      const boundingRect = board.getBoundingClientRect()
+      const x = e.clientX - boundingRect.left
+      const y = e.clientY - boundingRect.top
+      changeActiveConnection(targetDataSet.block_id || '', parseInt(targetDataSet.connection_index || '0'), x, y)
+    }
+  }, [changeActiveConnection])
 
   const mouseMoveBoard = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -79,17 +96,15 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({ size, blocks, changePosit
       width={size.width}
     >
       <BoardCanvas ref={canvasRef} height={size.height} width={size.width} />
-      {
-        Object.values(blocks).map((block) =>
-          <MoveableBlock
-            key={block.id}
-            block={block}
-            onGrabDown={onGrabDown}
-            onGrabUp={onGrabUp}
-          />
-        )
-      }
-
+      {Object.values(blocks).map((block) => (
+        <MoveableBlock
+          key={block.id}
+          block={block}
+          onGrabDown={onGrabDown}
+          onGrabUp={onGrabUp}
+          onConnectionClick={onConnectionClick}
+        />
+      ))}
     </Board>
   )
 }
