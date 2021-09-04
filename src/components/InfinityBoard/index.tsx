@@ -49,16 +49,24 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
     changeActiveBlock('')
   }, [changeActiveBlock])
 
-  const onConnectionClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    const targetDataSet = e.currentTarget.dataset
-    const board = boardRef.current
-    if (board) {
-      const boundingRect = board.getBoundingClientRect()
-      const x = e.clientX - boundingRect.left
-      const y = e.clientY - boundingRect.top
-      changeActiveConnection(targetDataSet.block_id || '', parseInt(targetDataSet.connection_index || '0'), x, y)
-    }
-  }, [changeActiveConnection])
+  const onConnectionClick = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      const targetDataSet = e.currentTarget.dataset
+      const board = boardRef.current
+      if (board) {
+        const boundingRect = board.getBoundingClientRect()
+        const x = e.clientX - boundingRect.left
+        const y = e.clientY - boundingRect.top
+        changeActiveConnection(
+          targetDataSet.block_id || '',
+          parseInt(targetDataSet.connection_index || '0'),
+          x,
+          y
+        )
+      }
+    },
+    [changeActiveConnection]
+  )
 
   const mouseMoveBoard = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

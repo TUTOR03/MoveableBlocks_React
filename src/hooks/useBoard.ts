@@ -79,12 +79,13 @@ export const useBoard = (size: { width: number; height: number }) => {
     yDiff: 0,
   })
 
-  const [activeConnectionState, setActiveConnectionState] = useState<ActiveConnectionStateT>({
-    activeBlockId: '',
-    activeConnectionIndex: 0,
-    x: 0,
-    y: 0
-  })
+  const [activeConnectionState, setActiveConnectionState] =
+    useState<ActiveConnectionStateT>({
+      activeBlockId: '',
+      activeConnectionIndex: 0,
+      x: 0,
+      y: 0,
+    })
 
   /**
    * Создание новых блоков
@@ -125,42 +126,53 @@ export const useBoard = (size: { width: number; height: number }) => {
    * Изменение активного соединения
    */
 
-  const changeActiveConnection = useCallback((blockId: string, connectionIndex: number, x: number, y: number) => {
-    if (!activeConnectionState.activeBlockId || activeConnectionState.activeBlockId === blockId) {
-      setActiveConnectionState({
-        activeBlockId: blockId,
-        activeConnectionIndex: connectionIndex,
-        x,
-        y
-      })
-    }
-    else {
-      setBlockState((prev) => {
-        console.log('set new conn')
-        const outBlock = prev[activeConnectionState.activeBlockId]
-        const inBlock = prev[blockId]
-        if (outBlock.type === 'in_out_block' && inBlock.type === 'in_out_block') {
-          outBlock.connections[activeConnectionState.activeConnectionIndex].connectedBlockId = blockId
-          inBlock.connections[connectionIndex].connectedBlockId = activeConnectionState.activeBlockId
-        }
-        console.log({
-          ...prev,
-          [activeConnectionState.activeBlockId]: outBlock,
-          [blockId]: inBlock
+  const changeActiveConnection = useCallback(
+    (blockId: string, connectionIndex: number, x: number, y: number) => {
+      if (
+        !activeConnectionState.activeBlockId ||
+        activeConnectionState.activeBlockId === blockId
+      ) {
+        setActiveConnectionState({
+          activeBlockId: blockId,
+          activeConnectionIndex: connectionIndex,
+          x,
+          y,
         })
-        return {
+      } else {
+        setBlockState((prev) => {
+          console.log('set new conn')
+          const outBlock = prev[activeConnectionState.activeBlockId]
+          const inBlock = prev[blockId]
+          if (
+            outBlock.type === 'in_out_block' &&
+            inBlock.type === 'in_out_block'
+          ) {
+            outBlock.connections[
+              activeConnectionState.activeConnectionIndex
+            ].connectedBlockId = blockId
+            inBlock.connections[connectionIndex].connectedBlockId =
+              activeConnectionState.activeBlockId
+          }
+          console.log({
+            ...prev,
+            [activeConnectionState.activeBlockId]: outBlock,
+            [blockId]: inBlock,
+          })
+          return {
+            ...prev,
+            [activeConnectionState.activeBlockId]: outBlock,
+            [blockId]: inBlock,
+          }
+        })
+        setActiveConnectionState((prev) => ({
           ...prev,
-          [activeConnectionState.activeBlockId]: outBlock,
-          [blockId]: inBlock
-        }
-      })
-      setActiveConnectionState((prev) => ({
-        ...prev,
-        activeBlockId: '',
-        activeConnectionIndex: 0
-      }))
-    }
-  }, [Object.keys(blockState).length, activeConnectionState])
+          activeBlockId: '',
+          activeConnectionIndex: 0,
+        }))
+      }
+    },
+    [Object.keys(blockState).length, activeConnectionState]
+  )
 
   /**
    * Изменение позиции активного блока
@@ -190,7 +202,7 @@ export const useBoard = (size: { width: number; height: number }) => {
         setActiveConnectionState((prev) => ({
           ...prev,
           x,
-          y
+          y,
         }))
       }
     },
@@ -218,10 +230,14 @@ export const useBoard = (size: { width: number; height: number }) => {
             const endPosition = {
               x:
                 blockState[connection.connectedBlockId].position.x +
-                Math.floor(blockState[connection.connectedBlockId].size.width / 2),
+                Math.floor(
+                  blockState[connection.connectedBlockId].size.width / 2
+                ),
               y:
                 blockState[connection.connectedBlockId].position.y +
-                Math.floor(blockState[connection.connectedBlockId].size.height / 2),
+                Math.floor(
+                  blockState[connection.connectedBlockId].size.height / 2
+                ),
             }
             const points = calcConnectionPoints(startPosition, endPosition)
             for (
@@ -244,14 +260,10 @@ export const useBoard = (size: { width: number; height: number }) => {
       }
       const endPosition = {
         x: activeConnectionState.x,
-        y: activeConnectionState.y
+        y: activeConnectionState.y,
       }
       const points = calcConnectionPoints(startPosition, endPosition)
-      for (
-        let pointIndex = 0;
-        pointIndex < points.length - 1;
-        pointIndex++
-      ) {
+      for (let pointIndex = 0; pointIndex < points.length - 1; pointIndex++) {
         ctx.moveTo(points[pointIndex].x, points[pointIndex].y)
         ctx.lineTo(points[pointIndex + 1].x, points[pointIndex + 1].y)
       }
