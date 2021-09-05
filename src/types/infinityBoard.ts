@@ -48,6 +48,9 @@ export type ChangeActiveStateProps =
     blockId: string
     connectionIndex: number
   }
+  | {
+    type: 'connection_reset'
+  }
 
 export type CalcNextPositionT = (
   prev: Block[],

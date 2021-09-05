@@ -202,6 +202,18 @@ export const useBoard = (size: { width: number; height: number }) => {
             }
           }
           break
+        case 'connection_reset': {
+          setActiveState((prev) => ({
+            ...prev,
+            connection: {
+              activeBlockId: '',
+              activeConnectionIndex: 0,
+              x: 0,
+              y: 0,
+            },
+          }))
+        }
+          break
       }
     },
     [Object.keys(blockState).length, activeState]

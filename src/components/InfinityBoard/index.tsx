@@ -86,6 +86,12 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
     [changePosition, drawBoard]
   )
 
+  const mouseUpBoard = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (e.target instanceof HTMLElement && e.target.dataset.type === 'board') {
+      changeActiveState({ type: 'connection_reset' })
+    }
+  }, [changeActiveState])
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
@@ -94,16 +100,17 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         drawBoard(context)
       }
     }
-  }, [])
+  }, [changeActiveState])
 
   return (
     <Board
       onMouseMove={mouseMoveBoard}
+      onMouseUp={mouseUpBoard}
       ref={boardRef}
       height={size.height}
       width={size.width}
     >
-      <BoardCanvas ref={canvasRef} height={size.height} width={size.width} />
+      <BoardCanvas ref={canvasRef} data-type='board' height={size.height} width={size.width} />
       {Object.values(blocks).map((block) => (
         <MoveableBlock
           key={block.id}
