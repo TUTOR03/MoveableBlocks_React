@@ -20,8 +20,6 @@ type ActiveStateT = {
   connection: {
     activeBlockId: string
     activeConnectionIndex: number
-    x: number
-    y: number
   }
 }
 
@@ -110,9 +108,12 @@ export const useBoard = (size: { width: number; height: number }) => {
     connection: {
       activeBlockId: '',
       activeConnectionIndex: 0,
-      x: 0,
-      y: 0,
     },
+  })
+
+  const [mousePosition, setMousePosition] = useState<PositionT>({
+    x: 0,
+    y: 0
   })
 
   /**
@@ -164,9 +165,7 @@ export const useBoard = (size: { width: number; height: number }) => {
                 if (!blockState[action.blockId].connections[action.connectionIndex].connectedBlockId) {
                   prev.connection = {
                     activeBlockId: action.blockId,
-                    activeConnectionIndex: action.connectionIndex,
-                    x: action.x,
-                    y: action.y,
+                    activeConnectionIndex: action.connectionIndex
                   }
                 }
                 return prev
@@ -233,14 +232,7 @@ export const useBoard = (size: { width: number; height: number }) => {
         })
       }
       if (activeState.connection.activeBlockId) {
-        setActiveState((prev) => ({
-          ...prev,
-          connection: {
-            ...prev.connection,
-            x,
-            y,
-          },
-        }))
+        setMousePosition({ x, y })
       }
     },
     [activeState]
@@ -294,8 +286,8 @@ export const useBoard = (size: { width: number; height: number }) => {
         y: block.position.y + Math.floor(block.size.height / 2),
       }
       const endPosition = {
-        x: activeState.connection.x,
-        y: activeState.connection.y,
+        x: mousePosition.x,
+        y: mousePosition.y,
       }
       const points = calcConnectionPoints(startPosition, endPosition)
       for (let pointIndex = 0; pointIndex < points.length - 1; pointIndex++) {

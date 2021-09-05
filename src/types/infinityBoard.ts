@@ -39,17 +39,15 @@ export type ChangeActiveStateT = (action: ChangeActiveStateProps) => void
 
 export type ChangeActiveStateProps =
   | {
-      type: 'block'
-      blockId: string
-      diff?: { xDiff: number; yDiff: number }
-    }
+    type: 'block'
+    blockId: string
+    diff?: { xDiff: number; yDiff: number }
+  }
   | {
-      type: 'connection'
-      blockId: string
-      connectionIndex: number
-      x: number
-      y: number
-    }
+    type: 'connection'
+    blockId: string
+    connectionIndex: number
+  }
 
 export type CalcNextPositionT = (
   prev: Block[],

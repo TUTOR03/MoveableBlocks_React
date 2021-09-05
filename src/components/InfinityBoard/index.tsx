@@ -61,9 +61,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         changeActiveState({
           type: 'connection',
           blockId: targetDataSet.block_id || '',
-          connectionIndex: parseInt(targetDataSet.connection_index || '0'),
-          x,
-          y,
+          connectionIndex: parseInt(targetDataSet.connection_index || '0')
         })
       }
     },

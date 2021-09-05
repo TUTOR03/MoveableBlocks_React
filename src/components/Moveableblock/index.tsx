@@ -19,9 +19,6 @@ type MoveableBlockProps = {
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
   ({ block, onConnectionClick, onGrabDown, onGrabUp }) => {
-    useEffect(() => {
-      console.log(block.id)
-    }, [onConnectionClick])
     return (
       <BlockContainer
         width={block.size.width}
