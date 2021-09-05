@@ -5,9 +5,7 @@ type BlockProps = {
   width: number
 }
 
-type ControlConnectorProps = {
-  color: string
-}
+type ControlConnectorProps = {}
 
 export const BlockContainer = styled.div<BlockProps>`
   position: absolute;
@@ -48,7 +46,7 @@ export const ControlButton = styled.button`
 export const ControlConnector = styled.div<ControlConnectorProps>`
   height: 31px;
   width: 31px;
-  background-color: ${(props) => props.color};
+  background-color: transparent;
   cursor: pointer;
   text-align: center;
   text-decoration: none;

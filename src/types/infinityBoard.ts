@@ -3,7 +3,7 @@ import React from 'react'
 /**
  * Типы блоков
  */
-export interface BaseBlock {
+export type Block = {
   id: string
   size: {
     height: number
@@ -11,6 +11,7 @@ export interface BaseBlock {
   }
   position: PositionT
   styles?: React.CSSProperties
+  connections: Connection[]
 }
 
 export type PositionT = {
@@ -18,32 +19,14 @@ export type PositionT = {
   y: number
 }
 
-export type Block = EmptyBlock | InOutBlock
-
 export type BaseBlockAction = Omit<Block, 'id'>
-
-export interface EmptyBlock extends BaseBlock {
-  type: 'empty_block'
-}
-
-export interface InOutBlock extends BaseBlock {
-  type: 'in_out_block'
-  connections: [InputConnection, OutputConnection]
-}
 
 /**
  * Типы соединений
  */
 
-export type Connection = InputConnection | OutputConnection
-
-export type InputConnection = {
-  type: 'input'
-  connectedBlockId: string
-}
-
-export type OutputConnection = {
-  type: 'output'
+export type Connection = {
+  type: 'input' | 'output'
   connectedBlockId: string
 }
 
@@ -52,17 +35,21 @@ export type OutputConnection = {
  */
 export type ChangePositionT = (x: number, y: number) => void
 
-export type ChangeActiveBlockT = (
-  blockId: string,
-  diff?: { xDiff: number; yDiff: number }
-) => void
+export type ChangeActiveStateT = (action: ChangeActiveStateProps) => void
 
-export type ChangeActiveConnectionT = (
-  blockId: string,
-  connectionIndex: number,
-  x: number,
-  y: number
-) => void
+export type ChangeActiveStateProps =
+  | {
+      type: 'block'
+      blockId: string
+      diff?: { xDiff: number; yDiff: number }
+    }
+  | {
+      type: 'connection'
+      blockId: string
+      connectionIndex: number
+      x: number
+      y: number
+    }
 
 export type CalcNextPositionT = (
   prev: Block[],

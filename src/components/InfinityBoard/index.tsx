@@ -1,8 +1,7 @@
 import MoveableBlock from '@components/Moveableblock'
 import {
   Block,
-  ChangeActiveBlockT,
-  ChangeActiveConnectionT,
+  ChangeActiveStateT,
   ChangePositionT,
   DrawBoardT,
 } from '@type/infinityBoard'
@@ -16,8 +15,7 @@ type InfinityBoardProps = {
   }
   blocks: { [key: string]: Block }
   changePosition: ChangePositionT
-  changeActiveBlock: ChangeActiveBlockT
-  changeActiveConnection: ChangeActiveConnectionT
+  changeActiveState: ChangeActiveStateT
   drawBoard: DrawBoardT
 }
 
@@ -25,8 +23,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
   size,
   blocks,
   changePosition,
-  changeActiveBlock,
-  changeActiveConnection,
+  changeActiveState,
   drawBoard,
 }) => {
   const boardRef = useRef<HTMLDivElement>(null)
@@ -39,15 +36,19 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         const boundingRect = board.getBoundingClientRect()
         const xDiff = e.clientX - boundingRect.left
         const yDiff = e.clientY - boundingRect.top
-        changeActiveBlock(e.currentTarget.dataset.name || '', { xDiff, yDiff })
+        changeActiveState({
+          type: 'block',
+          blockId: e.currentTarget.dataset.block_id || '',
+          diff: { xDiff, yDiff },
+        })
       }
     },
-    [changeActiveBlock]
+    [changeActiveState]
   )
 
   const onGrabUp = useCallback(() => {
-    changeActiveBlock('')
-  }, [changeActiveBlock])
+    changeActiveState({ type: 'block', blockId: '' })
+  }, [changeActiveState])
 
   const onConnectionClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -57,15 +58,16 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         const boundingRect = board.getBoundingClientRect()
         const x = e.clientX - boundingRect.left
         const y = e.clientY - boundingRect.top
-        changeActiveConnection(
-          targetDataSet.block_id || '',
-          parseInt(targetDataSet.connection_index || '0'),
+        changeActiveState({
+          type: 'connection',
+          blockId: targetDataSet.block_id || '',
+          connectionIndex: parseInt(targetDataSet.connection_index || '0'),
           x,
-          y
-        )
+          y,
+        })
       }
     },
-    [changeActiveConnection]
+    [changeActiveState]
   )
 
   const mouseMoveBoard = useCallback(

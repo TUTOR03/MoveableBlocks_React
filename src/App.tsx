@@ -7,19 +7,17 @@ const App: React.FC = () => {
   const {
     blocks,
     size,
-    changeActiveBlock,
-    changeActiveConnection,
+    changeActiveState,
     changePosition,
     createBlocks,
     drawBoard,
-  } = useBoard({ height: 500, width: 500 })
+  } = useBoard({ height: 600, width: 600 })
 
   return (
     <Container>
       <InfinityBoard
         blocks={blocks}
-        changeActiveBlock={changeActiveBlock}
-        changeActiveConnection={changeActiveConnection}
+        changeActiveState={changeActiveState}
         changePosition={changePosition}
         size={size}
         drawBoard={drawBoard}

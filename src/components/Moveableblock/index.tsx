@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react'
+import React, { MouseEvent, useEffect } from 'react'
 import {
   BlockContainer,
   ControlButton,
@@ -18,7 +18,10 @@ type MoveableBlockProps = {
 }
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
-  ({ block, onGrabDown, onGrabUp, onConnectionClick }) => {
+  ({ block, onConnectionClick, onGrabDown, onGrabUp }) => {
+    useEffect(() => {
+      console.log(block.id)
+    }, [onConnectionClick])
     return (
       <BlockContainer
         width={block.size.width}
@@ -30,7 +33,7 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
       >
         <ControlHeader>
           <ControlButton
-            data-name={block.id}
+            data-block_id={block.id}
             onMouseUp={onGrabUp}
             onMouseDown={onGrabDown}
             className="grab"
@@ -38,18 +41,16 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             {/* Найти иконку побольше */}
             <MoveArrow />
           </ControlButton>
-          {block.type === 'in_out_block' &&
-            block.connections.map((connection, connectionIndex) => (
-              <ControlConnector
-                key={connectionIndex}
-                color={connection.type === 'input' ? '#ff0000' : '#00ff00'}
-                data-block_id={block.id}
-                data-connection_index={connectionIndex}
-                onClick={onConnectionClick}
-              >
-                {connection.type === 'input' ? <InputArrow /> : <OutputArrow />}
-              </ControlConnector>
-            ))}
+          {block.connections.map((connection, connectionIndex) => (
+            <ControlConnector
+              key={connectionIndex}
+              data-block_id={block.id}
+              data-connection_index={connectionIndex}
+              onClick={onConnectionClick}
+            >
+              {connection.type === 'input' ? <InputArrow /> : <OutputArrow />}
+            </ControlConnector>
+          ))}
         </ControlHeader>
       </BlockContainer>
     )
