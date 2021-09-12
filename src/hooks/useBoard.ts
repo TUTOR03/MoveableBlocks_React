@@ -96,7 +96,7 @@ export const useBoard = (size: { width: number; height: number }) => {
           connectedBlockId: '',
         },
       ],
-    }
+    },
   })
 
   const [activeState, setActiveState] = useState<ActiveStateT>({
@@ -113,7 +113,7 @@ export const useBoard = (size: { width: number; height: number }) => {
 
   const [mousePosition, setMousePosition] = useState<PositionT>({
     x: 0,
-    y: 0
+    y: 0,
   })
 
   /**
@@ -162,10 +162,14 @@ export const useBoard = (size: { width: number; height: number }) => {
               activeState.connection.activeBlockId === action.blockId
             ) {
               setActiveState((prev) => {
-                if (!blockState[action.blockId].connections[action.connectionIndex].connectedBlockId) {
+                if (
+                  !blockState[action.blockId].connections[
+                    action.connectionIndex
+                  ].connectedBlockId
+                ) {
                   prev.connection = {
                     activeBlockId: action.blockId,
-                    activeConnectionIndex: action.connectionIndex
+                    activeConnectionIndex: action.connectionIndex,
                   }
                 }
                 return prev
@@ -202,17 +206,18 @@ export const useBoard = (size: { width: number; height: number }) => {
             }
           }
           break
-        case 'connection_reset': {
-          setActiveState((prev) => ({
-            ...prev,
-            connection: {
-              activeBlockId: '',
-              activeConnectionIndex: 0,
-              x: 0,
-              y: 0,
-            },
-          }))
-        }
+        case 'connection_reset':
+          {
+            setActiveState((prev) => ({
+              ...prev,
+              connection: {
+                activeBlockId: '',
+                activeConnectionIndex: 0,
+                x: 0,
+                y: 0,
+              },
+            }))
+          }
           break
       }
     },
@@ -258,36 +263,30 @@ export const useBoard = (size: { width: number; height: number }) => {
     ctx.fillRect(0, 0, size.width, size.height)
 
     ctx.strokeStyle = '#000000'
-    ctx.beginPath()
+    ctx.fillStyle = '#000000'
     for (let tempBlockId in blockState) {
       const block = blockState[tempBlockId]
       for (let connection of block.connections) {
         if (connection.type === 'output' && connection.connectedBlockId) {
+          const inputBlock = blockState[connection.connectedBlockId]
           const startPosition = {
             x: block.position.x + Math.floor(block.size.width / 2),
             y: block.position.y + Math.floor(block.size.height / 2),
           }
           const endPosition = {
-            x:
-              blockState[connection.connectedBlockId].position.x +
-              Math.floor(
-                blockState[connection.connectedBlockId].size.width / 2
-              ),
-            y:
-              blockState[connection.connectedBlockId].position.y +
-              Math.floor(
-                blockState[connection.connectedBlockId].size.height / 2
-              ),
+            x: inputBlock.position.x + Math.floor(inputBlock.size.width / 2),
+            y: inputBlock.position.y + Math.floor(inputBlock.size.height / 2),
           }
+
           const points = calcConnectionPoints(startPosition, endPosition)
-          for (
-            let pointIndex = 0;
-            pointIndex < points.length - 1;
-            pointIndex++
-          ) {
-            ctx.moveTo(points[pointIndex].x, points[pointIndex].y)
-            ctx.lineTo(points[pointIndex + 1].x, points[pointIndex + 1].y)
-          }
+          drawConnections(ctx, points)
+
+          drawArrow(
+            ctx,
+            inputBlock,
+            points[points.length - 1],
+            points[points.length - 2]
+          )
         }
       }
     }
@@ -302,11 +301,72 @@ export const useBoard = (size: { width: number; height: number }) => {
         y: mousePosition.y,
       }
       const points = calcConnectionPoints(startPosition, endPosition)
-      for (let pointIndex = 0; pointIndex < points.length - 1; pointIndex++) {
-        ctx.moveTo(points[pointIndex].x, points[pointIndex].y)
-        ctx.lineTo(points[pointIndex + 1].x, points[pointIndex + 1].y)
+      drawConnections(ctx, points)
+    }
+  }
+
+  /**
+   * Отрисовка указателя направления соединения
+   */
+  const drawArrow = (
+    ctx: CanvasRenderingContext2D,
+    block: Block,
+    lastPoint: PositionT,
+    prevLastPoint: PositionT
+  ) => {
+    let addRotation = 0
+    let inputArrowPosition = {
+      x: block.position.x + block.size.width / 2,
+      y: block.position.y + block.size.height / 2,
+    }
+
+    if (lastPoint.y - prevLastPoint.y === 0) {
+      if (lastPoint.x - prevLastPoint.x >= 0) {
+        addRotation = 0
+        inputArrowPosition.x -= block.size.width / 2
+      } else {
+        addRotation = Math.PI
+        inputArrowPosition.x += block.size.width / 2
+      }
+    } else if (lastPoint.x - prevLastPoint.x === 0) {
+      if (lastPoint.y - prevLastPoint.y >= 0) {
+        addRotation = Math.PI / 2
+        inputArrowPosition.y -= block.size.height / 2
+      } else {
+        addRotation = -Math.PI / 2
+        inputArrowPosition.y += block.size.height / 2
       }
     }
+
+    ctx.beginPath()
+    ctx.save()
+    ctx.translate(inputArrowPosition.x, inputArrowPosition.y)
+    ctx.moveTo(0, 0)
+    ctx.rotate(addRotation)
+    Array(2)
+      .fill(0)
+      .forEach((_) => {
+        ctx.rotate(-Math.PI / 3)
+        ctx.lineTo(0, -10)
+      })
+    ctx.restore()
+    ctx.closePath()
+    ctx.fill()
+  }
+
+  /**
+   * Отрисовка соединений
+   */
+  const drawConnections = (
+    ctx: CanvasRenderingContext2D,
+    points: PositionT[]
+  ) => {
+    ctx.beginPath()
+    for (let pointIndex = 0; pointIndex < points.length - 1; pointIndex++) {
+      ctx.moveTo(points[pointIndex].x, points[pointIndex].y)
+      ctx.lineTo(points[pointIndex + 1].x, points[pointIndex + 1].y)
+    }
+    ctx.closePath()
     ctx.stroke()
   }
 
@@ -360,47 +420,53 @@ export const useBoard = (size: { width: number; height: number }) => {
     x: number,
     y: number
   ): PositionT => {
-    let xDone = true
-    let yDone = true
+    let xNew = x
+    let yNew = y
     const xRight = x + prev[blockId].size.width - 1
     const yDown = y + prev[blockId].size.height - 1
     const prevX = prev[blockId].position.x
     const prevY = prev[blockId].position.y
     const prevXRight = prevX + prev[blockId].size.width - 1
     const prevYDown = prevY + prev[blockId].size.height - 1
-    if (x < 0 || xRight >= size.width) {
-      xDone = false
+
+    if (x < 0) {
+      xNew = 0
     }
-    if (y < 0 || yDown >= size.height) {
-      yDone = false
+    if (xRight >= size.width) {
+      xNew = size.width - prev[blockId].size.width
     }
+    if (y < 0) {
+      yNew = 0
+    }
+    if (yDown >= size.height) {
+      yNew = size.height - prev[blockId].size.height
+    }
+
     for (let tempBlockId in prev) {
       if (tempBlockId !== blockId) {
         const tempX = prev[tempBlockId].position.x
         const tempY = prev[tempBlockId].position.y
         const tempXRight = tempX + prev[tempBlockId].size.width - 1
         const tempYDown = tempY + prev[tempBlockId].size.height - 1
-        if (
-          prevY <= tempYDown &&
-          prevYDown >= tempY &&
-          ((xRight >= tempX && x <= tempX) ||
-            (x <= tempXRight && xRight >= tempXRight))
-        ) {
-          xDone = false
+        if (prevY <= tempYDown && prevYDown >= tempY) {
+          if (xRight >= tempX && x <= tempX) {
+            xNew = tempX - prev[blockId].size.width
+          } else if (x <= tempXRight && xRight >= tempXRight) {
+            xNew = tempXRight + 1
+          }
         }
-        if (
-          prevXRight >= tempX &&
-          prevX <= tempXRight &&
-          ((y <= tempYDown && yDown >= tempYDown) ||
-            (yDown >= tempY && y <= tempY))
-        ) {
-          yDone = false
+        if (prevXRight >= tempX && prevX <= tempXRight) {
+          if (yDown >= tempY && y <= tempY) {
+            yNew = tempY - prev[blockId].size.height
+          } else if (y <= tempYDown && yDown >= tempYDown) {
+            yNew = tempYDown + 1
+          }
         }
       }
     }
     return {
-      x: xDone ? x : prev[blockId].position.x,
-      y: yDone ? y : prev[blockId].position.y,
+      x: xNew,
+      y: yNew,
     }
   }
 

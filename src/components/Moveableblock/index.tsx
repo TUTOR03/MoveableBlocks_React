@@ -35,7 +35,6 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             onMouseDown={onGrabDown}
             className="grab"
           >
-            {/* Найти иконку побольше */}
             <MoveArrow />
           </ControlButton>
           {block.connections.map((connection, connectionIndex) => (
