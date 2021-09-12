@@ -4,6 +4,7 @@ import {
   ChangeActiveStateT,
   ChangePositionT,
   DrawBoardT,
+  ThemeStyle,
 } from '@type/infinityBoard'
 import React, { MouseEvent, useCallback, useEffect, useRef } from 'react'
 import { Board, BoardCanvas } from './InfinityBoard.styles'
@@ -13,6 +14,7 @@ type InfinityBoardProps = {
     width: number
     height: number
   }
+  theme: ThemeStyle
   blocks: { [key: string]: Block }
   changePosition: ChangePositionT
   changeActiveState: ChangeActiveStateT
@@ -22,6 +24,7 @@ type InfinityBoardProps = {
 const InfinityBoard: React.FC<InfinityBoardProps> = ({
   size,
   blocks,
+  theme,
   changePosition,
   changeActiveState,
   drawBoard,
@@ -30,7 +33,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const onGrabDown = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLDivElement>) => {
       const board = boardRef.current
       if (board && e.target) {
         const boundingRect = board.getBoundingClientRect()
@@ -106,6 +109,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
     <Board
       onMouseMove={mouseMoveBoard}
       onMouseUp={mouseUpBoard}
+      theme={theme}
       ref={boardRef}
       height={size.height}
       width={size.width}
@@ -115,6 +119,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         <MoveableBlock
           key={block.id}
           block={block}
+          theme={theme}
           onGrabDown={onGrabDown}
           onGrabUp={onGrabUp}
           onConnectionClick={onConnectionClick}

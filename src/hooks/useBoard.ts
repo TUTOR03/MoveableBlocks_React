@@ -2,6 +2,7 @@ import {
   BaseBlockAction,
   Block,
   ChangeActiveStateProps,
+  initSettings,
   PositionT,
 } from '@type/infinityBoard'
 import { useState, useCallback } from 'react'
@@ -23,7 +24,7 @@ type ActiveStateT = {
   }
 }
 
-export const useBoard = (size: { width: number; height: number }) => {
+export const useBoard = ({ size, theme }: initSettings) => {
   const [blockState, setBlockState] = useState<BlockStateT>({
     '1block': {
       id: '1block',
@@ -34,9 +35,6 @@ export const useBoard = (size: { width: number; height: number }) => {
       position: {
         x: 10,
         y: 10,
-      },
-      styles: {
-        border: '1px solid black',
       },
       connections: [
         {
@@ -59,9 +57,6 @@ export const useBoard = (size: { width: number; height: number }) => {
         x: 150,
         y: 150,
       },
-      styles: {
-        border: '1px solid black',
-      },
       connections: [
         {
           type: 'input',
@@ -82,9 +77,6 @@ export const useBoard = (size: { width: number; height: number }) => {
       position: {
         x: 300,
         y: 300,
-      },
-      styles: {
-        border: '1px solid black',
       },
       connections: [
         {
@@ -135,6 +127,9 @@ export const useBoard = (size: { width: number; height: number }) => {
     }))
   }
 
+  /**
+   * Изменение активного состояния блоков и соединений
+   */
   const changeActiveState = useCallback(
     (action: ChangeActiveStateProps) => {
       switch (action.type) {
@@ -256,14 +251,14 @@ export const useBoard = (size: { width: number; height: number }) => {
   )
 
   /**
-   * Отрисовка соединений и сети доски
+   * Отрисовка соединений и сетки доски
    */
   const drawBoard = (ctx: CanvasRenderingContext2D): void => {
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = theme.board.backgroundColor || theme.backgroundColor
     ctx.fillRect(0, 0, size.width, size.height)
 
-    ctx.strokeStyle = '#000000'
-    ctx.fillStyle = '#000000'
+    ctx.strokeStyle = theme.textColor
+    ctx.fillStyle = theme.textColor
     for (let tempBlockId in blockState) {
       const block = blockState[tempBlockId]
       for (let connection of block.connections) {
@@ -473,6 +468,7 @@ export const useBoard = (size: { width: number; height: number }) => {
   return {
     blocks: blockState,
     size,
+    theme,
     changePosition,
     changeActiveState,
     createBlocks,

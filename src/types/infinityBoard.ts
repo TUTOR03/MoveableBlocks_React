@@ -1,5 +1,3 @@
-import React from 'react'
-
 /**
  * Типы блоков
  */
@@ -10,7 +8,6 @@ export type Block = {
     width: number
   }
   position: PositionT
-  styles?: React.CSSProperties
   connections: Connection[]
 }
 
@@ -39,18 +36,18 @@ export type ChangeActiveStateT = (action: ChangeActiveStateProps) => void
 
 export type ChangeActiveStateProps =
   | {
-    type: 'block'
-    blockId: string
-    diff?: { xDiff: number; yDiff: number }
-  }
+      type: 'block'
+      blockId: string
+      diff?: { xDiff: number; yDiff: number }
+    }
   | {
-    type: 'connection'
-    blockId: string
-    connectionIndex: number
-  }
+      type: 'connection'
+      blockId: string
+      connectionIndex: number
+    }
   | {
-    type: 'connection_reset'
-  }
+      type: 'connection_reset'
+    }
 
 export type CalcNextPositionT = (
   prev: Block[],
@@ -62,3 +59,44 @@ export type CalcNextPositionT = (
 export type CreateBlockT = (action: BaseBlockAction[]) => void
 
 export type DrawBoardT = (ctx: CanvasRenderingContext2D) => void
+
+/**
+ * Настройки инициализации
+ */
+export type initSettings = {
+  size: {
+    width: number
+    height: number
+  }
+  useGrid: boolean
+  theme: ThemeStyle
+}
+
+/**
+ * Темы стилей
+ */
+
+// TODO: Придумать полезные параметры кастомизации
+export type ThemeStyle = {
+  mainColor: string
+  secondColor: string
+  backgroundColor: string
+  textColor: string
+  board: {
+    backgroundColor?: string
+    borderColor?: string
+    shadow?: string
+  }
+  block: {
+    shadow?: string
+    borderColor?: string
+    backgroundColor?: string
+    borderRadius?: string
+    header: {
+      justifyContent?: string
+      iconColor?: string
+      borderColor?: string
+    }
+    content: {}
+  }
+}
