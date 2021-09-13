@@ -5,6 +5,7 @@ import {
   initSettings,
   PositionT,
 } from '@type/infinityBoard'
+import { keepRectInRange } from '@utils/isBetween'
 import { useState, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -230,7 +231,8 @@ export const useBoard = ({ size, theme }: initSettings) => {
             prev,
             activeState.block.activeBlockId,
             x - activeState.block.xDiff,
-            y - activeState.block.yDiff
+            y - activeState.block.yDiff,
+            false
           )
           return {
             ...prev,
@@ -413,12 +415,17 @@ export const useBoard = ({ size, theme }: initSettings) => {
     prev: BlockStateT,
     blockId: string,
     x: number,
-    y: number
+    y: number,
+    isRetry: boolean
   ): PositionT => {
     let xNew = x
     let yNew = y
     const xRight = x + prev[blockId].size.width - 1
     const yDown = y + prev[blockId].size.height - 1
+
+    let xOk = true
+    let yOk = true
+
     const prevX = prev[blockId].position.x
     const prevY = prev[blockId].position.y
     const prevXRight = prevX + prev[blockId].size.width - 1
@@ -426,15 +433,17 @@ export const useBoard = ({ size, theme }: initSettings) => {
 
     if (x < 0) {
       xNew = 0
-    }
-    if (xRight >= size.width) {
+      xOk = false
+    } else if (xRight >= size.width) {
       xNew = size.width - prev[blockId].size.width
+      xOk = false
     }
     if (y < 0) {
       yNew = 0
-    }
-    if (yDown >= size.height) {
+      yOk = false
+    } else if (yDown >= size.height) {
       yNew = size.height - prev[blockId].size.height
+      yOk = false
     }
 
     for (let tempBlockId in prev) {
@@ -448,6 +457,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
             xNew = tempX - prev[blockId].size.width
           } else if (x <= tempXRight && xRight >= tempXRight) {
             xNew = tempXRight + 1
+            xOk = false
           }
         }
         if (prevXRight >= tempX && prevX <= tempXRight) {
@@ -455,13 +465,19 @@ export const useBoard = ({ size, theme }: initSettings) => {
             yNew = tempY - prev[blockId].size.height
           } else if (y <= tempYDown && yDown >= tempYDown) {
             yNew = tempYDown + 1
+            yOk = false
           }
         }
       }
     }
+
+    if (!isRetry) {
+      return calcNextPosition(prev, blockId, xNew, yNew, true)
+    }
+
     return {
-      x: xNew,
-      y: yNew,
+      x: xOk ? xNew : prev[blockId].position.x,
+      y: yOk ? yNew : prev[blockId].position.y,
     }
   }
 
