@@ -13,7 +13,11 @@ const App: React.FC = () => {
     changePosition,
     createBlocks,
     drawBoard,
-  } = useBoard({ size: { height: 600, width: 600 }, theme: defaultDark, useGrid: false })
+  } = useBoard({
+    size: { height: 600, width: 600 },
+    theme: defaultDark,
+    useGrid: false,
+  })
 
   return (
     <Container>

@@ -44,7 +44,7 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
               data-block_id={block.id}
               data-connection_index={connectionIndex}
               onClick={onConnectionClick}
-              className='connection'
+              className="connection"
             >
               {connection.type === 'input' ? <InputArrow /> : <OutputArrow />}
             </ControlConnector>
