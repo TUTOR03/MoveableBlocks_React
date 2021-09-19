@@ -28,10 +28,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
   const [blockState, setBlockState] = useState<BlockStateT>({
     '1block': {
       id: '1block',
-      size: {
-        height: 100,
-        width: 100,
-      },
+      size: { height: 100, width: 100 },
       position: {
         x: 10,
         y: 10,
