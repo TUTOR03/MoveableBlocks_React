@@ -9,6 +9,7 @@ const App: React.FC = () => {
     blocks,
     size,
     theme,
+    activeState,
     changeActiveState,
     changePosition,
     createBlocks,
@@ -24,6 +25,7 @@ const App: React.FC = () => {
       <InfinityBoard
         blocks={blocks}
         theme={theme}
+        activeState={activeState}
         changeActiveState={changeActiveState}
         changePosition={changePosition}
         size={size}

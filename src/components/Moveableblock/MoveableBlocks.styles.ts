@@ -4,6 +4,7 @@ import styled from 'styled-components'
 type BlockProps = {
   height: number
   width: number
+  isTouchable: boolean
   theme: ThemeStyle
 }
 
@@ -26,6 +27,7 @@ export const BlockContainer = styled.div<BlockProps>`
   border-radius: ${(props) => props.theme.block.borderRadius};
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
+  user-select: ${(props) => (props.isTouchable ? '' : 'none')};
 `
 
 export const ControlHeader = styled.div<HeaderProps>`

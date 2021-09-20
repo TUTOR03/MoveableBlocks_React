@@ -13,17 +13,26 @@ import { Block, ThemeStyle } from '@type/infinityBoard'
 type MoveableBlockProps = {
   block: Block
   theme: ThemeStyle
+  isTouchable: boolean
   onGrabDown: (e: MouseEvent<HTMLDivElement>) => void
   onGrabUp: (e: MouseEvent<HTMLDivElement>) => void
   onConnectionClick: (e: MouseEvent<HTMLDivElement>) => void
 }
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
-  ({ block, theme, onConnectionClick, onGrabDown, onGrabUp }) => {
+  ({ block, theme, isTouchable, onConnectionClick, onGrabDown, onGrabUp }) => {
+    const testFunc = () => {
+      return (
+        <div className="noNmae">
+          <h1>Hello</h1>
+        </div>
+      )
+    }
     return (
       <BlockContainer
         width={block.size.width}
         height={block.size.height}
+        isTouchable={isTouchable}
         theme={theme}
         style={{
           transform: `translate(${block.position.x}px,${block.position.y}px)`,
@@ -50,6 +59,7 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             </ControlConnector>
           ))}
         </ControlHeader>
+        {testFunc()}
       </BlockContainer>
     )
   }

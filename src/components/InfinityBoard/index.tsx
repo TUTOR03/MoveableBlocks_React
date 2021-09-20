@@ -1,5 +1,6 @@
 import MoveableBlock from '@components/Moveableblock'
 import {
+  ActiveStateT,
   Block,
   ChangeActiveStateT,
   ChangePositionT,
@@ -16,6 +17,7 @@ type InfinityBoardProps = {
   }
   theme: ThemeStyle
   blocks: { [key: string]: Block }
+  activeState: ActiveStateT
   changePosition: ChangePositionT
   changeActiveState: ChangeActiveStateT
   drawBoard: DrawBoardT
@@ -25,6 +27,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
   size,
   blocks,
   theme,
+  activeState,
   changePosition,
   changeActiveState,
   drawBoard,
@@ -130,6 +133,7 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         <MoveableBlock
           key={block.id}
           block={block}
+          isTouchable={activeState.block.activeBlockId === ''}
           theme={theme}
           onGrabDown={onGrabDown}
           onGrabUp={onGrabUp}

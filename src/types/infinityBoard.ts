@@ -16,6 +16,18 @@ export type PositionT = {
   y: number
 }
 
+export type ActiveStateT = {
+  block: {
+    activeBlockId: string
+    xDiff: number
+    yDiff: number
+  }
+  connection: {
+    activeBlockId: string
+    activeConnectionIndex: number
+  }
+}
+
 export type BaseBlockAction = Omit<Block, 'id'>
 
 /**

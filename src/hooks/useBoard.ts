@@ -4,24 +4,13 @@ import {
   ChangeActiveStateProps,
   initSettings,
   PositionT,
+  ActiveStateT,
 } from '@type/infinityBoard'
 import { useState, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 type BlockStateT = {
   [key: string]: Block
-}
-
-type ActiveStateT = {
-  block: {
-    activeBlockId: string
-    xDiff: number
-    yDiff: number
-  }
-  connection: {
-    activeBlockId: string
-    activeConnectionIndex: number
-  }
 }
 
 export const useBoard = ({ size, theme }: initSettings) => {
@@ -479,6 +468,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
 
   return {
     blocks: blockState,
+    activeState,
     size,
     theme,
     changePosition,
