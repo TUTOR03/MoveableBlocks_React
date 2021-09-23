@@ -4,7 +4,6 @@
     "target": "es2020",
     "moduleResolution": "node",
     "removeComments": true,
-    "declaration": true,
     "strict": true,
     "sourceMap": true,
     "esModuleInterop": true,

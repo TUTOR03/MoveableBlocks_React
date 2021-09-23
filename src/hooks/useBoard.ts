@@ -1,3 +1,4 @@
+import TestComponent from '@components/TestComponent'
 import {
   BaseBlockAction,
   Block,
@@ -5,8 +6,9 @@ import {
   initSettings,
   PositionT,
   ActiveStateT,
+  contentWrapper,
 } from '@type/infinityBoard'
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 type BlockStateT = {
@@ -17,11 +19,12 @@ export const useBoard = ({ size, theme }: initSettings) => {
   const [blockState, setBlockState] = useState<BlockStateT>({
     '1block': {
       id: '1block',
-      size: { height: 100, width: 100 },
+      size: { height: 300, width: 250 },
       position: {
         x: 10,
         y: 10,
       },
+      content: contentWrapper(TestComponent, { text: 'adawda', data: 123 }),
       connections: [
         {
           type: 'input',
@@ -33,48 +36,48 @@ export const useBoard = ({ size, theme }: initSettings) => {
         },
       ],
     },
-    '2block': {
-      id: '2block',
-      size: {
-        height: 100,
-        width: 100,
-      },
-      position: {
-        x: 150,
-        y: 150,
-      },
-      connections: [
-        {
-          type: 'input',
-          connectedBlockId: '',
-        },
-        {
-          type: 'output',
-          connectedBlockId: '',
-        },
-      ],
-    },
-    '3block': {
-      id: '3block',
-      size: {
-        height: 100,
-        width: 100,
-      },
-      position: {
-        x: 300,
-        y: 300,
-      },
-      connections: [
-        {
-          type: 'input',
-          connectedBlockId: '',
-        },
-        {
-          type: 'output',
-          connectedBlockId: '',
-        },
-      ],
-    },
+    // '2block': {
+    //   id: '2block',
+    //   size: {
+    //     height: 100,
+    //     width: 100,
+    //   },
+    //   position: {
+    //     x: 150,
+    //     y: 150,
+    //   },
+    //   connections: [
+    //     {
+    //       type: 'input',
+    //       connectedBlockId: '',
+    //     },
+    //     {
+    //       type: 'output',
+    //       connectedBlockId: '',
+    //     },
+    //   ],
+    // },
+    // '3block': {
+    //   id: '3block',
+    //   size: {
+    //     height: 100,
+    //     width: 100,
+    //   },
+    //   position: {
+    //     x: 300,
+    //     y: 300,
+    //   },
+    //   connections: [
+    //     {
+    //       type: 'input',
+    //       connectedBlockId: '',
+    //     },
+    //     {
+    //       type: 'output',
+    //       connectedBlockId: '',
+    //     },
+    //   ],
+    // },
   })
 
   const [activeState, setActiveState] = useState<ActiveStateT>({

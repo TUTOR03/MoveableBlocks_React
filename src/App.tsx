@@ -3,6 +3,7 @@ import { Container } from '@styles/index'
 import InfinityBoard from '@components/InfinityBoard'
 import { useBoard } from '@hooks/useBoard'
 import { defaultDark, defaultLight } from './assets/theme'
+import TestComponent from '@components/TestComponent'
 
 const App: React.FC = () => {
   const {

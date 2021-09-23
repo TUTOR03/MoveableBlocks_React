@@ -4,6 +4,7 @@ import {
   ControlMoveButton,
   ControlConnector,
   ControlHeader,
+  UserContent,
 } from './MoveableBlocks.styles'
 import MoveArrow from '@icons/MoveArrow.svg'
 import InputArrow from '@icons/InputArrow.svg'
@@ -21,13 +22,7 @@ type MoveableBlockProps = {
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
   ({ block, theme, isTouchable, onConnectionClick, onGrabDown, onGrabUp }) => {
-    const testFunc = () => {
-      return (
-        <div className="noNmae">
-          <h1>Hello</h1>
-        </div>
-      )
-    }
+    const { component, props } = block.content()
     return (
       <BlockContainer
         width={block.size.width}
@@ -59,7 +54,9 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             </ControlConnector>
           ))}
         </ControlHeader>
-        {testFunc()}
+        <UserContent>
+          {block.content && React.createElement(component, props)}
+        </UserContent>
       </BlockContainer>
     )
   }

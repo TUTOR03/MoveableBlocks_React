@@ -17,6 +17,8 @@ export const BlockContainer = styled.div<BlockProps>`
   top: 0;
   left: 0;
   transform-origin: left top;
+  display: flex;
+  flex-direction: column;
   box-shadow: ${(props) => props.theme.block.shadow};
   background-color: ${(props) =>
     props.theme.block.backgroundColor || props.theme.backgroundColor};
@@ -28,6 +30,11 @@ export const BlockContainer = styled.div<BlockProps>`
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
   user-select: ${(props) => (props.isTouchable ? '' : 'none')};
+`
+
+export const UserContent = styled.div`
+  height: 100%;
+  width: 100%;
 `
 
 export const ControlHeader = styled.div<HeaderProps>`

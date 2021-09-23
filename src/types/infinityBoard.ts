@@ -1,3 +1,6 @@
+import React from 'react'
+import { Container } from 'react-dom'
+
 /**
  * Типы блоков
  */
@@ -9,12 +12,21 @@ export type Block = {
   }
   position: PositionT
   connections: Connection[]
+  /**
+   * TODO: Придумать как проверять, что передаются верные пропсы
+   */
+  content: ReturnType<typeof contentWrapper>
 }
 
-export type PositionT = {
-  x: number
-  y: number
-}
+export const contentWrapper =
+  <T extends React.FC<Parameters<T>[0]>>(
+    component: T,
+    props: Parameters<T>[0]
+  ) =>
+  () => ({
+    component,
+    props,
+  })
 
 export type ActiveStateT = {
   block: {
@@ -37,6 +49,11 @@ export type BaseBlockAction = Omit<Block, 'id'>
 export type Connection = {
   type: 'input' | 'output'
   connectedBlockId: string
+}
+
+export type PositionT = {
+  x: number
+  y: number
 }
 
 /**
