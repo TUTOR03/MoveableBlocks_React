@@ -16,7 +16,7 @@ const App: React.FC = () => {
     createBlocks,
     drawBoard,
   } = useBoard({
-    size: { height: 600, width: 600 },
+    size: { height: 650, width: 650 },
     theme: defaultDark,
     useGrid: false,
   })

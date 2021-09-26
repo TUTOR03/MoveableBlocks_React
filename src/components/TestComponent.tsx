@@ -1,8 +1,7 @@
 import React from 'react'
 
 type TestcomponentProps = {
-  text: string
-  data: number
+  text: number
 }
 
 const TestComponent: React.FC<TestcomponentProps> = ({ text }) => {

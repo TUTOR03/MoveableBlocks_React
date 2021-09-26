@@ -15,7 +15,11 @@ export type Block = {
   /**
    * TODO: Придумать как проверять, что передаются верные пропсы
    */
-  content: ReturnType<typeof contentWrapper>
+  // content: ReturnType<typeof contentWrapper>
+  // content: {
+  //   component: React.FC<any>
+  //   props: React.PropsWithChildren<any>
+  // }
 }
 
 export const contentWrapper =

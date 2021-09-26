@@ -19,12 +19,18 @@ export const useBoard = ({ size, theme }: initSettings) => {
   const [blockState, setBlockState] = useState<BlockStateT>({
     '1block': {
       id: '1block',
-      size: { height: 300, width: 250 },
+      size: { height: 170, width: 100 },
       position: {
         x: 10,
         y: 10,
       },
-      content: contentWrapper(TestComponent, { text: 'adawda', data: 123 }),
+      // content: {
+      //   component: TestComponent,
+      //   props: {
+      //     text: test_text,
+      //   },
+      // },
+      // content: contentWrapper(TestComponent, { text: test_text }),
       connections: [
         {
           type: 'input',
@@ -36,48 +42,48 @@ export const useBoard = ({ size, theme }: initSettings) => {
         },
       ],
     },
-    // '2block': {
-    //   id: '2block',
-    //   size: {
-    //     height: 100,
-    //     width: 100,
-    //   },
-    //   position: {
-    //     x: 150,
-    //     y: 150,
-    //   },
-    //   connections: [
-    //     {
-    //       type: 'input',
-    //       connectedBlockId: '',
-    //     },
-    //     {
-    //       type: 'output',
-    //       connectedBlockId: '',
-    //     },
-    //   ],
-    // },
-    // '3block': {
-    //   id: '3block',
-    //   size: {
-    //     height: 100,
-    //     width: 100,
-    //   },
-    //   position: {
-    //     x: 300,
-    //     y: 300,
-    //   },
-    //   connections: [
-    //     {
-    //       type: 'input',
-    //       connectedBlockId: '',
-    //     },
-    //     {
-    //       type: 'output',
-    //       connectedBlockId: '',
-    //     },
-    //   ],
-    // },
+    '2block': {
+      id: '2block',
+      size: {
+        height: 70,
+        width: 100,
+      },
+      position: {
+        x: 450,
+        y: 450,
+      },
+      connections: [
+        {
+          type: 'input',
+          connectedBlockId: '',
+        },
+        {
+          type: 'output',
+          connectedBlockId: '',
+        },
+      ],
+    },
+    '3block': {
+      id: '3block',
+      size: {
+        height: 120,
+        width: 150,
+      },
+      position: {
+        x: 300,
+        y: 300,
+      },
+      connections: [
+        {
+          type: 'input',
+          connectedBlockId: '',
+        },
+        {
+          type: 'output',
+          connectedBlockId: '',
+        },
+      ],
+    },
   })
 
   const [activeState, setActiveState] = useState<ActiveStateT>({
@@ -220,7 +226,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
             activeState.block.activeBlockId,
             x - activeState.block.xDiff,
             y - activeState.block.yDiff,
-            false
+            'get'
           )
           return {
             ...prev,
@@ -399,13 +405,31 @@ export const useBoard = ({ size, theme }: initSettings) => {
   /**
    * Просчитывание следующей позиции, основываясь на новом положении курсора и предыдущей позиции
    */
-  const calcNextPosition = (
+
+  function calcNextPosition(
     prev: BlockStateT,
     blockId: string,
     x: number,
     y: number,
-    isRetry: boolean
-  ): PositionT => {
+    isRetry: 'get'
+  ): PositionT
+  function calcNextPosition(
+    prev: BlockStateT,
+    blockId: string,
+    x: number,
+    y: number,
+    isRetry: 'check'
+  ): {
+    x: boolean
+    y: boolean
+  }
+  function calcNextPosition(
+    prev: BlockStateT,
+    blockId: string,
+    x: number,
+    y: number,
+    isRetry: 'get' | 'check'
+  ) {
     let xNew = x
     let yNew = y
     const xRight = x + prev[blockId].size.width - 1
@@ -419,53 +443,71 @@ export const useBoard = ({ size, theme }: initSettings) => {
     const prevXRight = prevX + prev[blockId].size.width - 1
     const prevYDown = prevY + prev[blockId].size.height - 1
 
-    if (x < 0) {
-      xNew = 0
-      xOk = false
-    } else if (xRight >= size.width) {
-      xNew = size.width - prev[blockId].size.width
-      xOk = false
-    }
-    if (y < 0) {
-      yNew = 0
-      yOk = false
-    } else if (yDown >= size.height) {
-      yNew = size.height - prev[blockId].size.height
-      yOk = false
-    }
-
     for (let tempBlockId in prev) {
       if (tempBlockId !== blockId) {
         const tempX = prev[tempBlockId].position.x
         const tempY = prev[tempBlockId].position.y
         const tempXRight = tempX + prev[tempBlockId].size.width - 1
         const tempYDown = tempY + prev[tempBlockId].size.height - 1
-        if (prevY <= tempYDown && prevYDown >= tempY) {
-          if (xRight >= tempX && x <= tempX) {
-            xNew = tempX - prev[blockId].size.width
-          } else if (x <= tempXRight && xRight >= tempXRight) {
-            xNew = tempXRight + 1
-            xOk = false
+
+        if (prevYDown >= tempY && prevY <= tempYDown) {
+          const xCon = x <= tempXRight && xRight >= tempX
+          if (isRetry === 'get' && xCon) {
+            if (
+              xRight <=
+              tempX +
+                Math.ceil(prev[tempBlockId].size.width / 2) +
+                Math.ceil(prev[blockId].size.width / 2)
+            ) {
+              xNew = tempX - prev[blockId].size.width
+            } else {
+              xNew = tempXRight + 1
+            }
+          } else {
+            xOk = !xCon
           }
         }
+
         if (prevXRight >= tempX && prevX <= tempXRight) {
-          if (yDown >= tempY && y <= tempY) {
-            yNew = tempY - prev[blockId].size.height
-          } else if (y <= tempYDown && yDown >= tempYDown) {
-            yNew = tempYDown + 1
-            yOk = false
+          const yCon = y <= tempYDown && yDown >= tempY
+
+          if (isRetry === 'get' && yCon) {
+            if (
+              yDown <=
+              tempY +
+                Math.ceil(prev[tempBlockId].size.height / 2) +
+                Math.ceil(prev[blockId].size.height / 2)
+            ) {
+              yNew = tempY - prev[blockId].size.height
+            } else {
+              yNew = tempYDown + 1
+            }
+          } else {
+            yOk = !yCon
           }
         }
       }
     }
 
-    if (!isRetry) {
-      return calcNextPosition(prev, blockId, xNew, yNew, true)
-    }
+    if (isRetry === 'get') {
+      const isOk = calcNextPosition(prev, blockId, xNew, yNew, 'check')
+      xNew = isOk.x ? xNew : prevX
+      xNew = xNew >= 0 && xRight < size.width ? xNew : prevX
 
-    return {
-      x: xOk ? xNew : prev[blockId].position.x,
-      y: yOk ? yNew : prev[blockId].position.y,
+      yNew = isOk.y ? yNew : prevY
+      yNew = yNew >= 0 && yDown < size.height ? yNew : prevY
+      return {
+        x: xNew,
+        y: yNew,
+      }
+    } else if (isRetry === 'check') {
+      xOk = xOk ? xNew >= 0 && xRight < size.width : xOk
+      yOk = yOk ? yNew >= 0 && yDown < size.height : yOk
+
+      return {
+        x: xOk,
+        y: yOk,
+      }
     }
   }
 
