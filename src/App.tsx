@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container } from '@styles/index'
 import InfinityBoard from '@components/InfinityBoard'
 import { useBoard } from '@hooks/useBoard'
 import { defaultDark, defaultLight } from './assets/theme'
-import TestComponent from '@components/TestComponent'
+import WrapperBlock from '@components/WrapperBlock'
 
 const App: React.FC = () => {
   const {
@@ -21,17 +21,26 @@ const App: React.FC = () => {
     useGrid: false,
   })
 
+  const [tempState, setTempState] = useState(0)
+
   return (
     <Container>
       <InfinityBoard
-        blocks={blocks}
         theme={theme}
         activeState={activeState}
         changeActiveState={changeActiveState}
         changePosition={changePosition}
         size={size}
         drawBoard={drawBoard}
-      />
+      >
+        {Object.values(blocks).map((block) => {
+          return (
+            <WrapperBlock key={block.id} block={block}>
+              <h3>Hello</h3>
+            </WrapperBlock>
+          )
+        })}
+      </InfinityBoard>
     </Container>
   )
 }

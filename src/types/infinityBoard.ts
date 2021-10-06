@@ -12,25 +12,10 @@ export type Block = {
   }
   position: PositionT
   connections: Connection[]
-  /**
-   * TODO: Придумать как проверять, что передаются верные пропсы
-   */
-  // content: ReturnType<typeof contentWrapper>
-  // content: {
-  //   component: React.FC<any>
-  //   props: React.PropsWithChildren<any>
-  // }
+  userData: {
+    [key: string]: any
+  }
 }
-
-export const contentWrapper =
-  <T extends React.FC<Parameters<T>[0]>>(
-    component: T,
-    props: Parameters<T>[0]
-  ) =>
-  () => ({
-    component,
-    props,
-  })
 
 export type ActiveStateT = {
   block: {

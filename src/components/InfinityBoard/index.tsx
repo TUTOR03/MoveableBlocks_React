@@ -1,4 +1,5 @@
-import MoveableBlock from '@components/Moveableblock'
+import MoveableBlock from '@components/MoveableBlock'
+import WrapperBlock, { WrapperBlockProps } from '@components/WrapperBlock'
 import {
   ActiveStateT,
   Block,
@@ -16,22 +17,31 @@ type InfinityBoardProps = {
     height: number
   }
   theme: ThemeStyle
-  blocks: { [key: string]: Block }
+  children: InfinityBoardChildrenT | []
   activeState: ActiveStateT
   changePosition: ChangePositionT
   changeActiveState: ChangeActiveStateT
   drawBoard: DrawBoardT
 }
 
+type InfinityBoardChildrenT =
+  | React.ReactElement<InfinityBoardChildrenProps>[]
+  | React.ReactElement<InfinityBoardChildrenProps>
+
+type InfinityBoardChildrenProps = {
+  block: Block
+}
+
 const InfinityBoard: React.FC<InfinityBoardProps> = ({
   size,
-  blocks,
   theme,
   activeState,
+  children,
   changePosition,
   changeActiveState,
   drawBoard,
 }) => {
+  // console.log(children)
   const boardRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -129,17 +139,22 @@ const InfinityBoard: React.FC<InfinityBoardProps> = ({
         height={size.height}
         width={size.width}
       />
-      {Object.values(blocks).map((block) => (
-        <MoveableBlock
-          key={block.id}
-          block={block}
-          isTouchable={activeState.block.activeBlockId === ''}
-          theme={theme}
-          onGrabDown={onGrabDown}
-          onGrabUp={onGrabUp}
-          onConnectionClick={onConnectionClick}
-        />
-      ))}
+      {React.Children.map<any, React.ReactElement<InfinityBoardChildrenProps>>(
+        children,
+        (child) => (
+          <MoveableBlock
+            key={child.props.block.id}
+            block={child.props.block}
+            isTouchable={activeState.block.activeBlockId === ''}
+            theme={theme}
+            onGrabDown={onGrabDown}
+            onGrabUp={onGrabUp}
+            onConnectionClick={onConnectionClick}
+          >
+            {child}
+          </MoveableBlock>
+        )
+      )}
     </Board>
   )
 }

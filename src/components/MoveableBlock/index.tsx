@@ -21,8 +21,15 @@ type MoveableBlockProps = {
 }
 
 const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
-  ({ block, theme, isTouchable, onConnectionClick, onGrabDown, onGrabUp }) => {
-    // const { component, props } = block.content()
+  ({
+    block,
+    theme,
+    children,
+    isTouchable,
+    onConnectionClick,
+    onGrabDown,
+    onGrabUp,
+  }) => {
     return (
       <BlockContainer
         width={block.size.width}
@@ -54,10 +61,7 @@ const MoveableBlock: React.FC<MoveableBlockProps> = React.memo(
             </ControlConnector>
           ))}
         </ControlHeader>
-        <UserContent>
-          {/* {block.content &&
-            React.createElement(block.content.component, block.content.props)} */}
-        </UserContent>
+        <UserContent>{children}</UserContent>
       </BlockContainer>
     )
   }

@@ -1,4 +1,3 @@
-import TestComponent from '@components/TestComponent'
 import {
   BaseBlockAction,
   Block,
@@ -6,7 +5,6 @@ import {
   initSettings,
   PositionT,
   ActiveStateT,
-  contentWrapper,
 } from '@type/infinityBoard'
 import React, { useState, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -24,13 +22,6 @@ export const useBoard = ({ size, theme }: initSettings) => {
         x: 10,
         y: 10,
       },
-      // content: {
-      //   component: TestComponent,
-      //   props: {
-      //     text: test_text,
-      //   },
-      // },
-      // content: contentWrapper(TestComponent, { text: test_text }),
       connections: [
         {
           type: 'input',
@@ -41,6 +32,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
           connectedBlockId: '',
         },
       ],
+      userData: {},
     },
     '2block': {
       id: '2block',
@@ -62,6 +54,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
           connectedBlockId: '',
         },
       ],
+      userData: {},
     },
     '3block': {
       id: '3block',
@@ -83,6 +76,7 @@ export const useBoard = ({ size, theme }: initSettings) => {
           connectedBlockId: '',
         },
       ],
+      userData: {},
     },
   })
 
